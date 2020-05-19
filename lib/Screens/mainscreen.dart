@@ -65,6 +65,11 @@ class _MainScreenState extends State<MainScreen> {
     authCredential=widget.authCredential;
     user=widget.user;
     googleSignIn.signOut();
+    _auth.signOut().then((value) => {
+      print("user signed out"),
+    }).catchError((e)=>{
+      print(e),
+    });
     Navigator.pop(context);
 
   }
@@ -86,7 +91,7 @@ class _MainScreenState extends State<MainScreen> {
 
 
   Future<FirebaseUser> getUser() async {
-      transferUser=await user;
+      transferUser=user;
     return transferUser;
   }
 
@@ -98,50 +103,61 @@ class _MainScreenState extends State<MainScreen> {
     if(index==1){
       return HomeScreen(user: getUser(),);
     }
-    else return ProfileScreen(user: getUser(),);
+    if(index==2)
+      return ProfileScreen(user: getUser(),);
+    else signOut();
 }
 
 
   int index=0;
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: getPage(index),
-      bottomNavigationBar: BottomNavigationBar(
-        onTap: (value){
-          setState(() {
-            index=value;
-          });
+    return  Scaffold(
+        body: getPage(index),
+        bottomNavigationBar: BottomNavigationBar(
+          type: BottomNavigationBarType.fixed,
+          onTap: (value){
+            setState(() {
+              index=value;
+            });
 
-        },
-        backgroundColor: Colors.lightBlueAccent,
-        currentIndex: index,
-        selectedItemColor: Colors.white,
-        selectedFontSize: 15,
-        items: <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.search,
-              size: 35,),
-            title: Text(
-              'Discover',
-            ),
-          ),
-          BottomNavigationBarItem(
-          icon: Icon(Icons.home,size: 35,),
+          },
+          backgroundColor: Colors.blueAccent,
+          currentIndex: index,
+          selectedItemColor: Colors.white,
+          selectedFontSize: 20,
+          items: <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: Icon(Icons.search,
+                size: 35,),
               title: Text(
-            'Chats',)
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.perm_identity,
-              size: 35,
+                'Discover',
+              ),
             ),
-            title: Text(
-              'Profile',
+            BottomNavigationBarItem(
+            icon: Icon(Icons.home,size: 35,),
+                title: Text(
+              'Chats',)
             ),
-          ),
-        ],
-      ),
+            BottomNavigationBarItem(
+              icon: Icon(
+                Icons.perm_identity,
+                size: 35,
+              ),
+              title: Text(
+                'Profile',
+              ),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(
+                Icons.exit_to_app,
+                size: 35,),
+              title: Text(
+                'Sign Out',
+              ),
+            ),
+          ],
+        ),
     );
   }
 }

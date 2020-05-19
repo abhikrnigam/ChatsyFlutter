@@ -53,31 +53,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   }
 
-  Future<bool> onPop()
-  {
-    return showDialog(
-        context: context,
-      builder: (context){
-          AlertDialog(
-            title: Text("Do you want to quit?"),
-            actions: <Widget>[
-              FlatButton(
-                  child:Text("No"),
-                onPressed: (){
-                    Navigator.pop(context,false);
-                },
-              ),
-              FlatButton(
-                child:Text("Yes"),
-                onPressed: (){
-                  Navigator.pop(context,true);
-                },
-              ),
-            ],
-          );
-      }
-    );
-  }
 
 
 

@@ -160,7 +160,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 RawMaterialButton(
                   onPressed:() {
-                    _auth.signInWithEmailAndPassword(email: email, password: password);
+                    _auth.signInWithEmailAndPassword(email: email, password: password).catchError((e)=>{
+                      Scaffold.of(context).showSnackBar(SnackBar(content: Text("$e"),)),
+                    });
                     Navigator.push(context,MaterialPageRoute(builder:(context)=>(MainScreen())));
                   },
                   shape: RoundedRectangleBorder(
