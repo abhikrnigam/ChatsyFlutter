@@ -5,12 +5,16 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'welcomescreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:custom_radio_grouped_button/custom_radio_grouped_button.dart';
 class RegistrationScreen extends StatefulWidget {
   @override
   _RegistrationScreenState createState() => _RegistrationScreenState();
 }
 
 class _RegistrationScreenState extends State<RegistrationScreen> {
+
+  String name;
+  String gender;
 
 
   void setPreference() async
@@ -44,7 +48,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           Bubble(bubblecolor: Colors.redAccent,alignment: Alignment(-0.1,-0.5),),
           Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             Spacer(flex:3),
             Hero(
@@ -87,6 +90,30 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               ),
             Spacer(),
             Padding(
+              padding: EdgeInsets.symmetric(vertical:15.0,horizontal:12.0),
+              child: TextField(
+                textAlign: TextAlign.center,
+                autofocus: true,
+                style: TextStyle(
+                  color: Colors.black,
+                ),
+                onChanged: (value){
+                  name=value;
+                },
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: Colors.white,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(20)),
+                  ),
+                  hintText: 'Enter your full name',
+                  hintStyle: TextStyle(
+                    color: Colors.grey,
+                  ),
+                ),
+              ),
+            ),
+            Padding(
               padding:  EdgeInsets.symmetric(vertical:15.0,horizontal:12.0),
               child: TextField(
                 textAlign: TextAlign.center,
@@ -111,7 +138,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.symmetric(vertical:15.0,horizontal:12.0),
+              padding: EdgeInsets.symmetric(vertical:15.0,horizontal:30.0),
               child: TextField(
                 textAlign: TextAlign.center,
                 autofocus: true,
@@ -135,33 +162,71 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 ),
               ),
             ),
-            RawMaterialButton(
-              onPressed:() async{
-                if(email==null || password==null){
-                  print("email or password cant be numm");
-                }
-                else {
-                  _auth.createUserWithEmailAndPassword(email: email, password: password);
-                  setPreference();
-                await  _firestore.collection("User").document("$email").setData({
-                    "email":email,
-                  }).then((value) => {Navigator.push(context, MaterialPageRoute(builder: (context) => (LoginScreen())))});
-
-                }
-              },
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
-              elevation: 6,
-              fillColor: Colors.blue,
-              child: Padding(
-                padding: EdgeInsets.symmetric(vertical:8.0,horizontal: 40),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical:8.0,horizontal: 25.0),
+              child: Align(
+                alignment: Alignment.centerLeft,
                 child: Text(
-                  'Register',
+                  "Gender",
                   style: GoogleFonts.poppins(
-                    fontWeight: FontWeight.w500,
-                    color: Colors.white,
-                    fontSize: 25,
+                    color: Colors.blue,
+                    fontSize: 30,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical:8.0,horizontal: 20),
+              child: CustomRadioButton(
+                  buttonColor: Theme.of(context).canvasColor,
+                  buttonLables: [
+                    "Male",
+                    "Female",
+                    "Others",
+                  ],
+                  buttonValues: [
+                    "MALE",
+                    "FEMALE",
+                    "OTHERS",
+                  ],
+                  enableShape: true,
+                  radioButtonValue: (value) => gender=value,
+                  selectedColor: Theme.of(context).accentColor,
+                ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 25,horizontal: 20),
+              child: RawMaterialButton(
+                onPressed:() async{
+                  if(email==null || password==null || name==null){
+                    Scaffold.of(context).showSnackBar(SnackBar(content: Text("Any of the Fields can't be empty"),));
+                  }
+                  else {
+                    _auth.createUserWithEmailAndPassword(email: email, password: password);
+                    setPreference();
+                  await  _firestore.collection("User").document("$email").setData({
+                    "name":name,
+                    "gender":gender,
+                      "email":email,
+                    }).then((value) => {Navigator.push(context, MaterialPageRoute(builder: (context) => (LoginScreen())))});
+
+                  }
+                },
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                elevation: 6,
+                fillColor: Colors.blue,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(vertical:8.0,horizontal: 40),
+                  child: Text(
+                    'Register',
+                    style: GoogleFonts.poppins(
+                      fontWeight: FontWeight.w500,
+                      color: Colors.white,
+                      fontSize: 25,
+                    ),
                   ),
                 ),
               ),

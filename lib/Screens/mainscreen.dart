@@ -101,7 +101,10 @@ class _MainScreenState extends State<MainScreen> {
 
   void getTransferedPage(){
     if(!(transferIndex==null)){
-      getPage(transferIndex);
+      setState(() {
+        getPage(transferIndex);
+      });
+
     }
     else return;
   }

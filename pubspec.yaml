@@ -39,6 +39,7 @@ dependencies:
   firebase_storage:
   image_picker:
   shared_preferences: ^0.5.7+1
+  custom_radio_grouped_button:
 
 
 dev_dependencies:
