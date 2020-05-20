@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:chatsy/Screens/mainscreen.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:chatsy/Screens/homescreen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -39,7 +40,9 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
     super.initState();
     getCurrentUser();
 
-  }
+
+
+}
 
   Future<Position> getPosition()async{
   Position pos=await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.low);
@@ -83,7 +86,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
 
 
 
-      Navigator.push(context, MaterialPageRoute(builder: (context)=>HomeScreen()));
+      Navigator.push(context, MaterialPageRoute(builder: (context)=>MainScreen(transferIndex: 1,)));
     }
     );
   }
@@ -96,6 +99,18 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
     });
     await _firestore.collection("User").document("${friendUser}").collection("friends").add({
       "name":user.email
+    });
+
+    List<String> chatRoomName=["${user.email.toString()}","$friendUser"];
+    chatRoomName.sort();
+
+
+
+    await _firestore.collection("chatroom").document("${chatRoomName[0]}${chatRoomName[1]}").collection("chats").document().setData({
+      "sender":null,
+      "receiver":null,
+      "text":null,
+      "time":null,
     });
   }
 

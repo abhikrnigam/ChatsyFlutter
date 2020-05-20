@@ -12,18 +12,20 @@ import 'homescreen.dart';
 
 
 class MainScreen extends StatefulWidget {
+  int transferIndex;
 
   GoogleSignIn googleSignIn=new GoogleSignIn();
   GoogleSignInAccount googleSignInAccount;
   GoogleSignInAuthentication googleSignInAuthentication;
   AuthCredential authCredential;
   FirebaseUser user;
-  MainScreen({this.googleSignInAccount,this.googleSignInAuthentication,this.authCredential,this.user});
+  MainScreen({this.googleSignInAccount,this.googleSignInAuthentication,this.authCredential,this.user,this.transferIndex});
   @override
   _MainScreenState createState() => _MainScreenState();
 }
 
 class _MainScreenState extends State<MainScreen> {
+  int transferIndex;
   @override
   void initState() {
     super.initState();
@@ -35,7 +37,8 @@ class _MainScreenState extends State<MainScreen> {
     });
     }
     );
-
+    transferIndex=widget.transferIndex;
+    getTransferedPage();
   }
 
 
@@ -96,6 +99,14 @@ class _MainScreenState extends State<MainScreen> {
   }
 
 
+  void getTransferedPage(){
+    if(!(transferIndex==null)){
+      getPage(transferIndex);
+    }
+    else return;
+  }
+
+
   Widget getPage(int index) {
     if(index==0){
       return  DiscoverScreen(user: getUser(),);
@@ -122,7 +133,7 @@ class _MainScreenState extends State<MainScreen> {
             });
 
           },
-          backgroundColor: Colors.blueAccent,
+          backgroundColor: Colors.lightBlueAccent,
           currentIndex: index,
           selectedItemColor: Colors.white,
           selectedFontSize: 20,
