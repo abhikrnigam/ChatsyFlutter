@@ -1,5 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'mainscreen.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -19,6 +22,7 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+Firestore _firestore=Firestore.instance;
 
 
   @override
@@ -26,6 +30,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.initState();
     checkSharedPrefs();
   }
+
+
+
 
     void setStorageImageUrlSharedPerfs(String url)  async{
 
@@ -75,28 +82,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
       storage=FirebaseStorage.instance.ref().child("${user.email}+profileImage");
       StorageUploadTask uploadTask=storage.putFile(tempImage);
       StorageTaskSnapshot taskSnapshot=await uploadTask.onComplete;
-      print("Image Inserted");
       String url=await storage.getDownloadURL();
-      print("Download url getter");
       setStorageImageUrlSharedPerfs("$url");
       setSharedPreferencesTrue();
       setState(() {
-        Scaffold.of(context).showSnackBar(SnackBar(content: Text("Profile picture uploaded....Kindly wait...."),)) ;
+        Scaffold.of(context).showSnackBar(SnackBar(content: Text("Profile picture uploaded, refresh page to view"),)) ;
       });
-      Future.delayed(Duration(milliseconds: 500),(){
-        if (!mounted) return;
-        setState(() {
 
-        });
-      });
 
     }
-
-  Future<FirebaseUser> getUser()  async
+  FirebaseUser user;
+  Future getUser()  async
   {
     return await widget.user;
   }
-
 
   void setSharedPreferencesTrue() async
   {
@@ -104,51 +103,154 @@ class _ProfileScreenState extends State<ProfileScreen> {
   prefs.setBool("doProfilePicExists", true);
   }
 
+  FirebaseUser CurrentUser;
+  var CurrentUserEmail;
 
-
+  Future getCurrentUserEmail() async{
+    CurrentUser = await widget.user;
+    CurrentUserEmail=CurrentUser.email.toString();
+    return CurrentUserEmail;
+  }
 
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Container(
-        child: Column(
-          children: <Widget>[
-            Container(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                image: DecorationImage(
-                  fit: BoxFit.cover,
-                  image:  NetworkImage(url),
+    return Scaffold(
+      body: Container(
+          child: Column(
+            children: <Widget>[
+              Hero(
+                tag: 'chatsyContainer',
+                child: Material(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.only(bottomLeft: Radius.circular(20),bottomRight: Radius.circular(20)),
+                      color: Colors.lightBlueAccent,
+                    ),
+                    child: Align(
+                        alignment: Alignment.topLeft,
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(15, 35, 1, 5),
+                          child: Text(
+                            "Chatsy",
+                            style: GoogleFonts.quicksand(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                              fontSize: 35,
+                            ),
+                          ),
+                        )
+                    ),
+                  ),
                 ),
               ),
-              height: MediaQuery.of(context).size.height*0.20,
-            width: MediaQuery.of(context).size.width*0.50,
-//            child: Image.network(url,fit: BoxFit.fill, loadingBuilder: (BuildContext context,Widget widget,ImageChunkEvent imagechunkevent){
-//              if(imagechunkevent==null)return widget;
-//              return CircularProgressIndicator(
-//                value: imagechunkevent.expectedTotalBytes != null ?
-//                imagechunkevent.cumulativeBytesLoaded / imagechunkevent.expectedTotalBytes
-//                    : null,
-//                backgroundColor: Colors.blue,
-//                strokeWidth: 10,
-//              );
-//            },) ,
-            ),
-            RawMaterialButton(
-              fillColor: Colors.cyan,
-              onPressed:  uploadImage,
-            ),
-            Row(
-              children: <Text>[
-                Text(""),
-                Text(""),
-              ],
-            ),
-            Text(""),
-          ],
+              Spacer(),
+              ListView(
+                shrinkWrap: true,
+                children:<Widget>[
+                  Container(
+                  child: Material(
+                    borderRadius: BorderRadius.circular(20),
+                    elevation: 6,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 60.0,horizontal: 10),
+                      child: Column(
+                        children: <Widget>[
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Padding(
+                                padding: const EdgeInsets.only(left:60.0),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    image: DecorationImage(
+                                      fit: BoxFit.cover,
+                                      image:  NetworkImage(url),
+                                    ),
+                                  ),
+                                  height: 150,
+                                  width: 150,
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.fromLTRB(8, 90, 2, 2),
+                                child: FloatingActionButton(
+                                  backgroundColor: Colors.blue,
+                                  child: Icon(
+                                    Icons.camera_alt,
+                                    color: Colors.white,
+                                    size: 30,
+                                  ),
+                                  onPressed:  uploadImage,
+                                ),
+                              ),
+                            ],
+                          ),
+
+                          Spacer(),
+                          FutureBuilder(
+                            future: getCurrentUserEmail(),
+                            builder: (context,snapshot){
+                              if(snapshot.connectionState==ConnectionState.done){
+                                return StreamBuilder(
+                                  stream: Firestore.instance.collection("User").document("${snapshot.data}").snapshots(),
+                                  builder: (context,docs){
+                                    if(!docs.hasData){
+                                      return Center(child: CircularProgressIndicator(backgroundColor: Colors.blue,));
+                                    }
+                                    return Column(
+                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                      children: <Widget>[
+                                        Card(
+                                          elevation: 6,
+                                          color: Colors.blue,
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+                                            child: Text(
+                                              "${docs.data["name"]}",
+                                              style: GoogleFonts.poppins(
+                                                color: Colors.white,
+                                                fontSize: 35,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        Card(
+                                          elevation: 6,
+                                          color: Colors.blue,
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+                                            child: Text(
+                                              "${docs.data["email"]}",
+                                              style: GoogleFonts.poppins(
+                                                color: Colors.white,
+                                                fontSize: 20,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                              }
+                              else return Center(child: CircularProgressIndicator(backgroundColor: Colors.blue,));
+                            },
+                          ),
+                          Spacer(flex: 3,),
+
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                ]
+              ),
+              Spacer(flex:3)
+            ],
+          ),
         ),
-      ),
     );
   }
 }
