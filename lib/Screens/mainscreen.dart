@@ -88,7 +88,6 @@ class _MainScreenState extends State<MainScreen> {
     Firestore _firestore=Firestore.instance;
    await _firestore.collection("User").document("$name").updateData({
      "location":location.data,
-     "name":user.displayName,
    });
   }
 

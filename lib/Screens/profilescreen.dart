@@ -22,7 +22,11 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+<<<<<<< HEAD
   Firestore _firestore=Firestore.instance;
+=======
+Firestore _firestore=Firestore.instance;
+>>>>>>> master
 
 
   @override
@@ -31,6 +35,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
     checkSharedPrefs();
   }
 
+<<<<<<< HEAD
+=======
+
+
+
+    void setStorageImageUrlSharedPerfs(String url)  async{
+>>>>>>> master
 
 
 
@@ -58,6 +69,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     {
       url=await getStorageImageURLSharedPerfs();
 
+<<<<<<< HEAD
     }
     else{
       url="https://moonvillageassociation.org/wp-content/uploads/2018/06/default-profile-picture1.jpg";
@@ -91,6 +103,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
 
   }
+=======
+      FirebaseUser user=await getUser();
+      var tempImage = await ImagePicker.pickImage(source: ImageSource.gallery);
+      StorageReference storage=FirebaseStorage.instance.ref().child("${user.email}+profileImage");
+      storage.delete().whenComplete(() => {
+        print("Image deleted from database")
+      });
+      storage=FirebaseStorage.instance.ref().child("${user.email}+profileImage");
+      StorageUploadTask uploadTask=storage.putFile(tempImage);
+      StorageTaskSnapshot taskSnapshot=await uploadTask.onComplete;
+      String url=await storage.getDownloadURL();
+      setStorageImageUrlSharedPerfs("$url");
+      setSharedPreferencesTrue();
+      setState(() {
+        Scaffold.of(context).showSnackBar(SnackBar(content: Text("Profile picture uploaded, refresh page to view"),)) ;
+      });
+
+
+    }
+>>>>>>> master
   FirebaseUser user;
   Future getUser()  async
   {
@@ -116,6 +148,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+<<<<<<< HEAD
       body: Column(
         children: <Widget>[
           Hero(
@@ -228,6 +261,126 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ],
           ),
         ],
+=======
+      body: Container(
+        child: Column(
+          children: <Widget>[
+            Hero(
+              tag: 'chatsyContainer',
+              child: Material(
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.only(bottomLeft: Radius.circular(20),bottomRight: Radius.circular(20)),
+                    color: Colors.lightBlueAccent,
+                  ),
+                  child: Align(
+                      alignment: Alignment.topLeft,
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(15, 35, 1, 5),
+                        child: Text(
+                          "Chatsy",
+                          style: GoogleFonts.quicksand(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                            fontSize: 35,
+                          ),
+                        ),
+                      )
+                  ),
+                ),
+              ),
+            ),
+            Spacer(),
+            Column(
+              children: <Widget>[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.only(left:60.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          image: DecorationImage(
+                            fit: BoxFit.cover,
+                            image:  NetworkImage(url),
+                          ),
+                        ),
+                        height: 150,
+                        width: 150,
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(8, 90, 2, 2),
+                      child: FloatingActionButton(
+                        backgroundColor: Colors.blue,
+                        child: Icon(
+                          Icons.camera_alt,
+                          color: Colors.white,
+                          size: 30,
+                        ),
+                        onPressed:  uploadImage,
+                      ),
+                    ),
+                  ],
+                ),
+
+                Spacer(),
+                FutureBuilder(
+                  future: getCurrentUserEmail(),
+                  builder: (context,snapshot){
+                    if(snapshot.connectionState==ConnectionState.done){
+                      return StreamBuilder(
+                        stream: Firestore.instance.collection("User").document("${snapshot.data}").snapshots(),
+                        builder: (context,docs){
+                          if(!docs.hasData){
+                            return Center(child: CircularProgressIndicator(backgroundColor: Colors.blue,));
+                          }
+                          return Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: <Widget>[
+                              Card(
+                                elevation: 6,
+                                color: Colors.blue,
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+                                  child: Text(
+                                    "${docs.data["name"]}",
+                                    style: GoogleFonts.poppins(
+                                      color: Colors.white,
+                                      fontSize: 35,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Card(
+                                elevation: 6,
+                                color: Colors.blue,
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+                                  child: Text(
+                                    "${docs.data["email"]}",
+                                    style: GoogleFonts.poppins(
+                                      color: Colors.white,
+                                      fontSize: 20,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    }
+                    else return Center(child: CircularProgressIndicator(backgroundColor: Colors.blue,));
+                  },
+                ),
+
+              ],
+            ),
+          ],
+        ),
+>>>>>>> master
       ),
     );
   }
