@@ -143,89 +143,95 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ),
           ),
-          Column(
-            children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.only(left:60.0),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        image: DecorationImage(
-                          fit: BoxFit.cover,
-                          image:  NetworkImage(url),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical:20.0),
+            child: Column(
+              children: <Widget>[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.only(left:60.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          image: DecorationImage(
+                            fit: BoxFit.cover,
+                            image:  NetworkImage(url),
+                          ),
                         ),
+                        height: 150,
+                        width: 150,
                       ),
-                      height: 150,
-                      width: 150,
                     ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(8, 90, 2, 2),
-                    child: FloatingActionButton(
-                      backgroundColor: Colors.blue,
-                      child: Icon(
-                        Icons.camera_alt,
-                        color: Colors.white,
-                        size: 30,
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(8, 90, 2, 2),
+                      child: FloatingActionButton(
+                        backgroundColor: Colors.blue,
+                        child: Icon(
+                          Icons.camera_alt,
+                          color: Colors.white,
+                          size: 30,
+                        ),
+                        onPressed:  uploadImage,
                       ),
-                      onPressed:  uploadImage,
                     ),
-                  ),
-                ],
-              ),
-              FutureBuilder(
-                future: getCurrentUserEmail(),
-                builder: (context,snapshot){
-                  if(snapshot.connectionState==ConnectionState.done){
-                    return StreamBuilder(
-                      stream: Firestore.instance.collection("User").document("${snapshot.data}").snapshots(),
-                      builder: (context,docs){
-                        if(!docs.hasData){
-                          return Center(child: CircularProgressIndicator(backgroundColor: Colors.blue,));
-                        }
-                        return Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: <Widget>[
-                            Card(
-                              elevation: 6,
-                              color: Colors.blue,
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
-                                child: Text(
-                                  "${docs.data["name"]}",
-                                  style: GoogleFonts.poppins(
-                                    color: Colors.white,
-                                    fontSize: 35,
+                  ],
+                ),
+                FutureBuilder(
+                  future: getCurrentUserEmail(),
+                  builder: (context,snapshot){
+                    if(snapshot.connectionState==ConnectionState.done){
+                      return StreamBuilder(
+                        stream: Firestore.instance.collection("User").document("${snapshot.data}").snapshots(),
+                        builder: (context,docs){
+                          if(!docs.hasData){
+                            return Center(child: CircularProgressIndicator(backgroundColor: Colors.blue,));
+                          }
+                          return Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: <Widget>[
+                              Padding(
+                                padding: const EdgeInsets.symmetric(vertical:20.0),
+                                child: Card(
+                                  elevation: 6,
+                                  color: Colors.blue,
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+                                    child: Text(
+                                      "${docs.data["name"]}",
+                                      style: GoogleFonts.poppins(
+                                        color: Colors.white,
+                                        fontSize: 35,
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                            Card(
-                              elevation: 6,
-                              color: Colors.blue,
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
-                                child: Text(
-                                  "${docs.data["email"]}",
-                                  style: GoogleFonts.poppins(
-                                    color: Colors.white,
-                                    fontSize: 20,
+                              Card(
+                                elevation: 6,
+                                color: Colors.blue,
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+                                  child: Text(
+                                    "${docs.data["email"]}",
+                                    style: GoogleFonts.poppins(
+                                      color: Colors.white,
+                                      fontSize: 20,
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                  }
-                  else return Center(child: CircularProgressIndicator(backgroundColor: Colors.blue,));
-                },
-              ),
-            ],
+                            ],
+                          );
+                        },
+                      );
+                    }
+                    else return Center(child: CircularProgressIndicator(backgroundColor: Colors.blue,));
+                  },
+                ),
+              ],
+            ),
           ),
         ],
       ),
