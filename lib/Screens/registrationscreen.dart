@@ -68,11 +68,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                             children: <TextSpan>[
                               TextSpan(
                                 text: "Chatsy \n",
-                              style: GoogleFonts.quicksand(
+                              style: GoogleFonts.quicksand
+                                (
                             fontSize: 40,
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
-                          ),
+                                ),
                               ),
                               TextSpan(
                                 text: "Register",

@@ -102,8 +102,6 @@ class _ChatScreenState extends State<ChatScreen> {
                           int i = 0;
                           for (i = 0; i < length; i++)
                           {
-
-
                               messageText.add(snapshot.data.documents[i]["text"]
                                   .toString());
                               sender.add(snapshot.data.documents[i]["sender"]

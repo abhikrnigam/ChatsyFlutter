@@ -1,9 +1,11 @@
+import 'package:chatsy/Screens/welcomescreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'discoverscreen.dart';
 import 'profilescreen.dart';
 import 'homescreen.dart';
@@ -61,19 +63,21 @@ class _MainScreenState extends State<MainScreen> {
 
 
   }
-  void signOut(){
+  void signOut() async{
 
-    googleSignIn=widget.googleSignIn;
-    googleSignInAccount=widget.googleSignInAccount;
-    authCredential=widget.authCredential;
-    user=widget.user;
-    googleSignIn.signOut();
+//    googleSignIn=widget.googleSignIn;
+//    googleSignInAccount=widget.googleSignInAccount;
+//    authCredential=widget.authCredential;
+//    user=widget.user;
+//    googleSignIn.signOut();
+  SharedPreferences sharedPreferences=await SharedPreferences.getInstance();
+  sharedPreferences.setBool("isLoggedIn", false);
     _auth.signOut().then((value) => {
       print("user signed out"),
     }).catchError((e)=>{
       print(e),
     });
-    Navigator.pop(context);
+    Navigator.pushReplacement(context,MaterialPageRoute(builder: (context)=>WelcomeScreen()));
 
   }
 
@@ -84,7 +88,7 @@ class _MainScreenState extends State<MainScreen> {
     GeoFirePoint location = geo.point(
         latitude: pos.latitude, longitude: pos.longitude);
 
-    var name=user.email;
+    var name=user.email.toString();
     Firestore _firestore=Firestore.instance;
    await _firestore.collection("User").document("$name").updateData({
      "location":location.data,
@@ -99,7 +103,7 @@ class _MainScreenState extends State<MainScreen> {
 
 
   void getTransferedPage(){
-    if(!(transferIndex==null)){
+    if(transferIndex!=null){
       setState(() {
         getPage(transferIndex);
       });
@@ -122,7 +126,7 @@ class _MainScreenState extends State<MainScreen> {
 }
 
 
-  int index=0;
+  int index=1;
   @override
   Widget build(BuildContext context) {
     return  Scaffold(

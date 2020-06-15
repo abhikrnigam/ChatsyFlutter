@@ -1,6 +1,7 @@
 import 'package:chatsy/Screens/mainscreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'welcomescreen.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -16,6 +17,16 @@ class _LoginScreenState extends State<LoginScreen> {
   final FirebaseAuth _auth=FirebaseAuth.instance;
   final GoogleSignIn googleSignIn=new GoogleSignIn();
 
+
+
+  void setLoginPrefs() async{
+    SharedPreferences sharedPreferences=await SharedPreferences.getInstance();
+    sharedPreferences.setBool("isLoggedIn", true);
+  }
+
+
+
+
   Future<FirebaseUser> signIn()async {
 
     GoogleSignInAccount signInAccount=await googleSignIn.signIn();
@@ -29,6 +40,8 @@ class _LoginScreenState extends State<LoginScreen> {
       Navigator.push(context, MaterialPageRoute(builder: (context)=>MainScreen()));
     }
   }
+  TextEditingController emailController=new TextEditingController();
+  TextEditingController passwordController=new TextEditingController();
   @override
   Widget build(BuildContext context) {
     String email;
@@ -79,39 +92,40 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
                 Spacer(flex:1),
-                Padding(
-                  padding:  EdgeInsets.symmetric(horizontal:50.0,vertical: 10),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.blue,
-                      borderRadius: BorderRadius.all(Radius.circular(20)),
-                    ),
-                    child: RawMaterialButton(
-                      onPressed: () {
-                        signIn();
-                      },
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Icon(
-                            FontAwesomeIcons.google,
-                            color: Colors.white,
-                          ),
-                          Text(
-                            "   Sign in with Google",
-                            style: GoogleFonts.poppins(
-                              color: Colors.white,
-                              fontSize: 18,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
+//                Padding(
+//                  padding:  EdgeInsets.symmetric(horizontal:50.0,vertical: 10),
+//                  child: Container(
+//                    decoration: BoxDecoration(
+//                      color: Colors.blue,
+//                      borderRadius: BorderRadius.all(Radius.circular(20)),
+//                    ),
+//                    child: RawMaterialButton(
+//                      onPressed: () {
+//                        signIn();
+//                      },
+//                      child: Row(
+//                        mainAxisAlignment: MainAxisAlignment.center,
+//                        children: <Widget>[
+//                          Icon(
+//                            FontAwesomeIcons.google,
+//                            color: Colors.white,
+//                          ),
+//                          Text(
+//                            "   Sign in with Google",
+//                            style: GoogleFonts.poppins(
+//                              color: Colors.white,
+//                              fontSize: 18,
+//                            ),
+//                          ),
+//                        ],
+//                      ),
+//                    ),
+//                  ),
+//                ),
                 Padding(
                   padding:  EdgeInsets.symmetric(vertical:15.0,horizontal:12.0),
                   child: TextField(
+                    controller: emailController,
                     textAlign: TextAlign.center,
                     autofocus: true,
                     style: TextStyle(
@@ -136,6 +150,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 Padding(
                   padding: EdgeInsets.symmetric(vertical:15.0,horizontal:12.0),
                   child: TextField(
+                    controller: passwordController,
                     textAlign: TextAlign.center,
                     autofocus: true,
                     obscureText: true,
@@ -160,9 +175,12 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 RawMaterialButton(
                   onPressed:() {
-                    _auth.signInWithEmailAndPassword(email: email, password: password).catchError((e)=>{
+                    _auth.signInWithEmailAndPassword(email: emailController.text.toString(), password: passwordController.text.toString()).catchError((e)=>{
                       Scaffold.of(context).showSnackBar(SnackBar(content: Text("$e"),)),
                     });
+                    emailController.clear();
+                    passwordController.clear();
+                    setLoginPrefs();
                     Navigator.push(context,MaterialPageRoute(builder:(context)=>(MainScreen())));
                   },
                   shape: RoundedRectangleBorder(
