@@ -15,13 +15,8 @@ import 'homescreen.dart';
 
 class MainScreen extends StatefulWidget {
   int transferIndex;
-
-  GoogleSignIn googleSignIn=new GoogleSignIn();
-  GoogleSignInAccount googleSignInAccount;
-  GoogleSignInAuthentication googleSignInAuthentication;
-  AuthCredential authCredential;
   FirebaseUser user;
-  MainScreen({this.googleSignInAccount,this.googleSignInAuthentication,this.authCredential,this.user,this.transferIndex});
+  MainScreen({this.user,this.transferIndex});
   @override
   _MainScreenState createState() => _MainScreenState();
 }
@@ -45,10 +40,6 @@ class _MainScreenState extends State<MainScreen> {
 
 
   FirebaseUser transferUser;
-  GoogleSignIn googleSignIn;
-  GoogleSignInAccount googleSignInAccount;
-  GoogleSignInAuthentication googleSignInAuthentication;
-  AuthCredential authCredential;
   FirebaseUser user;
   FirebaseAuth _auth=FirebaseAuth.instance;
 
@@ -64,12 +55,6 @@ class _MainScreenState extends State<MainScreen> {
 
   }
   void signOut() async{
-
-//    googleSignIn=widget.googleSignIn;
-//    googleSignInAccount=widget.googleSignInAccount;
-//    authCredential=widget.authCredential;
-//    user=widget.user;
-//    googleSignIn.signOut();
   SharedPreferences sharedPreferences=await SharedPreferences.getInstance();
   sharedPreferences.setBool("isLoggedIn", false);
     _auth.signOut().then((value) => {
@@ -77,7 +62,7 @@ class _MainScreenState extends State<MainScreen> {
     }).catchError((e)=>{
       print(e),
     });
-    Navigator.pushReplacement(context,MaterialPageRoute(builder: (context)=>WelcomeScreen()));
+    Navigator.push(context,MaterialPageRoute(builder: (context)=>WelcomeScreen()));
 
   }
 

@@ -92,36 +92,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
                 Spacer(flex:1),
-//                Padding(
-//                  padding:  EdgeInsets.symmetric(horizontal:50.0,vertical: 10),
-//                  child: Container(
-//                    decoration: BoxDecoration(
-//                      color: Colors.blue,
-//                      borderRadius: BorderRadius.all(Radius.circular(20)),
-//                    ),
-//                    child: RawMaterialButton(
-//                      onPressed: () {
-//                        signIn();
-//                      },
-//                      child: Row(
-//                        mainAxisAlignment: MainAxisAlignment.center,
-//                        children: <Widget>[
-//                          Icon(
-//                            FontAwesomeIcons.google,
-//                            color: Colors.white,
-//                          ),
-//                          Text(
-//                            "   Sign in with Google",
-//                            style: GoogleFonts.poppins(
-//                              color: Colors.white,
-//                              fontSize: 18,
-//                            ),
-//                          ),
-//                        ],
-//                      ),
-//                    ),
-//                  ),
-//                ),
                 Padding(
                   padding:  EdgeInsets.symmetric(vertical:15.0,horizontal:12.0),
                   child: TextField(

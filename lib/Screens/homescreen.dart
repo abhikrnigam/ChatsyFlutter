@@ -20,7 +20,7 @@ class _HomeScreenState extends State<HomeScreen> {
   FirebaseUser user;
   String email;
 
-
+  Firestore _firestore= Firestore.instance;
 
 
 
@@ -80,82 +80,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ),
-//            Flexible(
-//              child: email==null?CircularProgressIndicator():StreamBuilder<QuerySnapshot>(
-//                stream: Firestore.instance.collection("User").document("${user.email}").collection("friends").snapshots(),
-//                builder: (context,snapshot){
-//                  if(!snapshot.hasData){
-//                    return CircularProgressIndicator();
-//                  }
-//                  List<int> listOfIndicesForbidden=[];
-//                  void uniqueListTiles()
-//                  {
-//                    print(user.email.toString());
-//                    int length=snapshot.data.documents.length;
-//                    for(int i=0;i<length && !listOfIndicesForbidden.contains(i);i++)
-//                    {
-//
-//                            for (int j = i + 1; j < length; j++)
-//                            {
-//                                if (snapshot.data.documents[i]["name"] == snapshot.data.documents[j]["name"] && !listOfIndicesForbidden.contains(j))
-//                                {
-//                                  listOfIndicesForbidden.add(j);
-//                                }
-//                            }
-//
-//                    }
-//
-//                  }
-//                  uniqueListTiles();
-//                  return ListView.builder(
-//                    itemCount: snapshot.data.documents.length,
-//                      itemBuilder: (context,index)
-//                      {
-//                        String friendemail;
-//                        friendemail=snapshot.data.documents[index]["name"].toString();
-//                        if (!listOfIndicesForbidden.contains(index))
-//                        {
-//                          return Container(
-//                            margin: EdgeInsets.symmetric(
-//                                vertical: 5, horizontal: 10),
-//                            padding: EdgeInsets.symmetric(
-//                                vertical: 15, horizontal: 5),
-//                            decoration: BoxDecoration(
-//                                borderRadius: BorderRadius.circular(10),
-//                                color: Colors.blue
-//                            ),
-//                            child: ListTile(
-//                              onTap: (){
-//                                  Navigator.push(context, MaterialPageRoute(builder: (context)=>ChatScreen(friendEmail: snapshot.data.documents[index]["name"].toString(),user: user,)));
-//                              },
-//                              leading: Icon(
-//                                Icons.account_circle,
-//                                color: Colors.white,
-//                                size: 40,
-//                              ),
-//                              //contentPadding: EdgeInsets.symmetric(horizontal: 1,vertical: 3),
-//                              title:  friendemail==null?Text("Discover users to populate chats",style: TextStyle(color: Colors.black54),):Text(
-//                                "$friendemail",
-//                                style: GoogleFonts.poppins(
-//                                  fontSize: 20,
-//                                  color: Colors.white,
-//                                ),),
-//                            ),
-//                          );
-//                        }
-//                        else
-//                          {
-//                          index++;
-//                          return Container(
-//                            height: 0,
-//                            width: 0,
-//                          );
-//                        }
-//                      }
-//                  );
-//                },
-//              ),
-//            ),
             Flexible(
               child: FutureBuilder(
                 future: getUser(),
@@ -174,7 +98,6 @@ class _HomeScreenState extends State<HomeScreen> {
                         List<int> listOfIndicesForbidden=[];
                         void uniqueListTiles()
                         {
-                          print(user.email.toString());
                           int length=snapshot.data.documents.length;
                           for(int i=0;i<length && !listOfIndicesForbidden.contains(i);i++)
                           {
@@ -218,12 +141,26 @@ class _HomeScreenState extends State<HomeScreen> {
                                       size: 40,
                                     ),
                                     //contentPadding: EdgeInsets.symmetric(horizontal: 1,vertical: 3),
-                                    title:  friendemail==null?Text("Discover users to populate chats",style: TextStyle(color: Colors.black54),):Text(
-                                      "$friendemail",
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 20,
-                                        color: Colors.white,
-                                      ),),
+                                    title: StreamBuilder<DocumentSnapshot>(
+                                      stream: _firestore.collection("User").document("$friendemail").snapshots(),
+                                      builder: (context,snapshot){
+                                        if(!snapshot.hasData){
+                                          return Text("...",style: TextStyle(fontSize: 20,color: Colors.white),);
+                                        }
+                                        else{
+                                          return Text("${snapshot.data["name"]}",style: GoogleFonts.poppins(
+                                            fontSize: 20,color: Colors.white,
+                                          ),);
+                                        }
+                                      },
+                                    ),
+//                                    Text(
+//                                      "$username",
+//                                      style: GoogleFonts.poppins(
+//                                        fontSize: 20,
+//                                        color: Colors.white,
+//                                      ),
+//                                    ),
                                   ),
                                 );
                               }

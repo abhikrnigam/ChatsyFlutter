@@ -39,12 +39,7 @@ class _MyAppState extends State<MyApp> {
         future: getPrefs(),
         builder: (context,snapshot){
           if(!snapshot.hasData){
-            return Container(
-              height: 100,
-              width: 100,
-              color: Colors.white,
-              child: CircularProgressIndicator(backgroundColor: Colors.blue,),
-            );
+            return WelcomeScreen();
           }
           else{
             if(snapshot.data==true){

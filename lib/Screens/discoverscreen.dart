@@ -25,7 +25,8 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
 
   Firestore _firestore=Firestore.instance;
   FirebaseUser user;
-
+  String username1;
+  String username2;
 
 
 
@@ -92,13 +93,14 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
   }
 
 
+
   void addToFriends(String friendUser) async{
     FirebaseUser user=await getCurrentUser();
     await _firestore.collection("User").document("${user.email}").collection("friends").add({
-        "name":friendUser
+      "name":friendUser,
     });
-    await _firestore.collection("User").document("${friendUser}").collection("friends").add({
-      "name":user.email
+    await _firestore.collection("User").document("$friendUser").collection("friends").add({
+      "name":user.email,
     });
 
     List<String> chatRoomName=["${user.email.toString()}","$friendUser"];
@@ -235,7 +237,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                         ),
                         Slider(
                           value: radius,
-                          max: 100,
+                          max: 500,
                           min: 0,
                           activeColor: Colors.blue,
                           inactiveColor: Colors.white,
