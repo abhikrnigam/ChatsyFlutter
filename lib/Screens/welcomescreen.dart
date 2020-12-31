@@ -109,7 +109,7 @@ class WelcomeScreen extends StatelessWidget {
                   ),
                 ),
                 Spacer(flex:3),
-                Text("Made By: Abhishek with ❤️",
+                Text("Made By: Ravi and Nikhil with ❤️",
                 style: GoogleFonts.poppins(
                   fontSize: 12.0,
                   color: Colors.grey,
